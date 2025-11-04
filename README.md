@@ -27,5 +27,5 @@ Uygulama; döviz kuru, yakıt fiyatı, hava durumu, günlük film önerisi ve ba
 - **Bootstrap 5** 
 
 ---
-<img src="https://raw.githubusercontent.com/BelDinlemez/AkademiQRapidApi/gorsel.png" alt="Dashboard Görseli" />
+<img src="https://raw.githubusercontent.com/BelDinlemez/AkademiQRapidApi/master/gorsel.png" alt="Dashboard Görseli" />
 
