@@ -1,0 +1,322 @@
+﻿@model AkademiQRapidApi.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "📊 RapidAPI Dashboard";
+
+    var source = Model.SportsScores ?? new List<SportsScoreViewModel>();
+    var slice = source.OrderByDescending(m => m.Date)
+                      .Skip(2)
+                      .Take(3)
+                      .OrderBy(m => m.Date);
+
+    var rates = Model.CurrencyRates!.Rates!;
+    var eurToTry = rates["TRY"] / rates["EUR"];
+
+     var euroGas = Model.FuelPrices!.Gasoline;
+     var euroDies = Model.FuelPrices!.Diesel;
+
+     var tlGas = Math.Round(euroGas * eurToTry, 2);
+     var tlDies = Math.Round(euroDies * eurToTry, 2);
+}
+<style>
+    .match-table td,
+    .match-table th {
+        height: 50px;
+        vertical-align: middle; 
+    }
+
+    .match-table img {
+        height: 24px; 
+        width: auto;
+    }
+
+    .table.align-middle td,
+    .table.align-middle th {
+        vertical-align: middle;
+        padding-top: 0.75rem; 
+        padding-bottom: 0.75rem;
+        font-size: 0.95rem; 
+    }
+
+    .table.align-middle img {
+        vertical-align: middle;
+    }
+
+    .pastel-yesil {
+        background-color: #F5FFF5;
+        padding: 20px;
+        border-radius: 10px;
+        color: #333; /* yazı rengi kontrast için */
+        text-align: center;
+        font-family: Arial, sans-serif;
+    }
+
+</style>
+
+<div class="container pastel-yesil my-4">
+    <h1 class="text-center mb-5">📊 RapidAPI Dashboard</h1>
+
+    <!-- Üstteki 4 Kart -->
+    <div class="row g-4 mb-4">
+        <!-- USD/TRY -->
+        <div class="col-md-4">
+            <div class="card alert alert-success shadow-sm border-0 h-100 text-center">
+                <div class="card-body">
+                    <h5 class="card-title">💱 USD → TRY</h5>
+                    <p class="display-6 fw-bold">@Model.CurrencyRates.Rates["TRY"]</p>
+                    <p class="text-muted mb-0">1 USD</p>
+                </div>
+            </div>
+        </div>
+        <!-- Benzin -->
+        <div class="col-md-4">
+            <div class="card alert alert-success shadow-sm border-0 h-100 text-center">
+                <div class="card-body">
+                    <h5 class="card-title">⛽ Benzin</h5>
+                     <p class="display-6 fw-bold">@tlGas TL</p> 
+                    <p class="text-muted mb-0">Litre fiyatı</p>
+                </div>
+            </div>
+        </div>
+        <!-- Dizel -->
+        <div class="col-md-4">
+            <div class="card alert alert-success shadow-sm border-0 h-100 text-center">
+                <div class="card-body">
+                    <h5 class="card-title">🚚 Dizel</h5>
+                     <p class="display-6 fw-bold">@tlDies TL</p>
+                    <p class="text-muted mb-0">Litre fiyatı</p>
+                </div>
+            </div>
+        </div>
+        <!-- Günün Filmi -->
+ 
+
+    <!-- Hava Durumu -->
+    <div class="row g-4 mb-4">
+    @*     <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">@Model.IstanbulWeather?.City 🌤</h5>
+                    <img src="@Model.IstanbulWeather?.ConditionIcon" class="mb-2" />
+                    <p class="fw-bold">@Model.IstanbulWeather?.TempC °C</p>
+                    <p class="text-muted">@Model.IstanbulWeather?.ConditionText</p>
+                    <small>@Model.IstanbulWeather?.Region - @Model.IstanbulWeather?.Country</small>
+                </div>
+            </div>
+        </div> *@
+
+            <div class="col-md-6">
+                <div class="card alert alert-info shadow-sm border-0 h-100 text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">🎬 Günün Filmi</h5>
+                        @if (Model.MovieOfTheDay is not null)
+                        {
+                            <img src="@Model.MovieOfTheDay.ImageUrl" class="img-fluid rounded mb-2" style="max-height:120px; object-fit:cover;" alt="Poster">
+                            <h6 class="fw-bold">@Model.MovieOfTheDay.Title</h6>
+                            <p class="small text-muted">@Model.MovieOfTheDay.Description</p>
+                            <a href="@Model.MovieOfTheDay.Url" target="_blank" class="btn btn-sm  btn-warning">IMDb</a>
+                        }
+                        else
+                        {
+                            <p class="text-muted">Veri yok</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        
+        <div class="col-md-6">
+                <div class="card alert alert-info shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">@Model.AnkaraWeather?.City 🌤</h5>
+                    <img src="@Model.AnkaraWeather?.ConditionIcon" class="mb-2" />
+                    <p class="fw-bold">@Model.AnkaraWeather?.TempC °C</p>
+                    <p class="text-muted">@Model.AnkaraWeather?.ConditionText</p>
+                    <small>@Model.AnkaraWeather?.Region - @Model.AnkaraWeather?.Country</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Her iki tablo için aynı satır yüksekliği ve logo boyu */
+        .match-table td, .match-table th {
+            height: 56px;
+            vertical-align: middle;
+            padding: .75rem;
+        }
+
+        .match-table img {
+            height: 24px;
+            width: auto;
+            vertical-align: middle;
+        }
+    </style>
+
+    <div class="row mt-4">
+        <!-- Basketbol -->
+        <div class="col-md-12">
+                <div class="card alert alert-dark shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="card-title  mb-3">🏀 Son Basketbol Maç Skorları</h5>
+                    <div class="table-responsive">
+                        <table class="table align-middle match-table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Yıl</th>
+                                    <th>Lig</th>
+                                    <th>Ev</th>
+                                    <th>Skor</th>
+                                    <th>Deplasman</th>
+                                    <th>Skor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var m in slice)
+                                {
+                                    <tr>
+                                        <td>@m.Date.Year</td>
+                                        <td><img src="@m.LeagueLogo" class="me-1" /> @m.LeagueName</td>
+                                        <td><img src="@m.HomeLogo" class="me-1" /> @m.HomeTeam</td>
+                                        <td>@m.HomeTotal</td>
+                                        <td><img src="@m.AwayLogo" class="me-1" /> @m.AwayTeam</td>
+                                        <td>@m.AwayTotal</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+@* 
+        <!-- Voleybol -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">🏐 Son Voleybol Maç Skorları</h5>
+                    <div class="table-responsive">
+                        <table class="table align-middle match-table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Tarih</th>
+                                    <th>Lig</th>
+                                    <th>Ev</th>
+                                    <th>Skor</th>
+                                    <th>Deplasman</th>
+                                    <th>Skor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var v in Model.VolleyballMatches)
+                                {
+                                    <tr>
+                                        <td>@v.Date</td>
+                                        <td>
+                                            @if (!string.IsNullOrWhiteSpace(v.LeagueLogo))
+                                            {
+                                                <img src="@v.LeagueLogo" class="me-1" />
+                                            }
+                                            @v.League
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrWhiteSpace(v.HomeLogo))
+                                            {
+                                                <img src="@v.HomeLogo" alt="@v.HomeTeam" class="me-1" />
+                                            }
+                                            @v.HomeTeam
+                                        </td>
+                                        <td>@v.HomeScore</td>
+                                        <td>
+                                            @if (!string.IsNullOrWhiteSpace(v.AwayLogo))
+                                            {
+                                                <img src="@v.AwayLogo" alt="@v.AwayTeam" class="me-1" />
+                                            }
+                                            @v.AwayTeam
+                                        </td>
+                                        <td>@v.AwayScore</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> *@
+@*     <div class="card shadow-sm border-0 mt-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">📰 Türkçe Haberler</h5>
+            <div class="row row-cols-1 row-cols-md-4 g-3">
+                @foreach (var n in Model.TurkishNews)
+                {
+                    <div class="col">
+                        <div class="card h-100 border-0">
+                            @if (!string.IsNullOrWhiteSpace(n.ImageUrl))
+                            {
+                                <img class="card-img-top" src="@n.ImageUrl" alt="">
+                            }
+                            <div class="card-body">
+                                <h6 class="card-title">@n.Title</h6>
+                                <p class="card-text text-muted" style="font-size:.9rem;">@n.Description</p>
+                            </div>
+                            <div class="card-footer bg-white border-0">
+                                <a href="@n.Url" target="_blank" class="btn btn-sm btn-outline-primary">Oku</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="card shadow-sm border-0 mt-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">₿ BTC / USD</h5>
+                <div>
+                    <span class="fs-4 fw-bold" id="btcPrice">@Model.CryptoQuote.Price</span>
+                    <span id="btcChange" class="ms-2"></span>
+                </div>
+            </div>
+            <canvas id="btcChart" height="120" class="mt-3"></canvas>
+        </div>*@
+    </div> 
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const initialSeries = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                    Model.CryptoSeries.Select(p => new { t = p.Time, y = p.Price })
+                ));
+
+        const ctx = document.getElementById('btcChart').getContext('2d');
+        const chart = new Chart(ctx, {
+          type: 'line',
+          data: { datasets: [{
+            label: 'BTC/USD',
+            data: initialSeries.map(p => ({ x: new Date(p.t), y: p.y })),
+            tension: .25, pointRadius: 0
+          }]},
+          options: {
+            parsing: false,
+            scales: { x: { type: 'time', time: { unit: 'hour' } }, y: { beginAtZero: false } }
+          }
+        });
+
+        function setChange(el, val){
+          const v = Number(val).toFixed(2);
+          el.textContent = (v>0?'▲ ':'▼ ')+v+'%';
+          el.className = v>0?'text-success':'text-danger';
+        }
+        setChange(document.getElementById('btcChange'), @Model.CryptoQuote.Change24h);
+
+        // Basit canlı güncelleme: 30 sn'de bir sunucudan çek
+        async function refreshBtc(){
+          try{
+            const res = await fetch('/api/crypto/btc');
+            const data = await res.json();
+            document.getElementById('btcPrice').textContent = Number(data.price).toFixed(2);
+            setChange(document.getElementById('btcChange'), data.change);
+            chart.data.datasets[0].data = data.series.map(p => ({ x: new Date(p.t), y: p.y }));
+            chart.update('none');
+          }catch(e){ /* sessiz geç */ }
+        }
+        setInterval(refreshBtc, 30000);
+    </script>
